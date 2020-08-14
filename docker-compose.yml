@@ -1,0 +1,28 @@
+version: "3.4"
+
+services:
+  app:
+    build:
+      context: .
+      target: dev
+    working_dir: /usr/src/app
+    environment:
+      - SSH_AUTH_SOCK=/tmp/ssh_auth.sock
+    extra_hosts:
+      - dockerhost:${DOCKERHOST:-172.17.0.1}
+    volumes:
+      - .:/usr/src/app
+      - $SSH_AUTH_SOCK:/tmp/ssh_auth.sock
+  mysql:
+    image: mysql:5
+    restart: always
+    ports:
+      - 3306:3306
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+      - ./docker/mysql:/docker-entrypoint-initdb.d
+      - .:/app
+    environment:
+      # user will be created in startup sql script in ./docker/mysql/app_shoptarget.sql
+      - MYSQL_DATABASE=shortgopher
+      - MYSQL_ROOT_PASSWORD=shortgopher

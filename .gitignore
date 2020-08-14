@@ -2,3 +2,4 @@ c.out
 vendor
 .gopath
 bin/*
+data
