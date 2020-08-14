@@ -1,6 +1,6 @@
 .PHONY: cli
 cli:
-	docker-compose run --rm app sh
+	docker-compose run --rm --service-ports app sh
 
 .PHONY: compile
 compile:
