@@ -10,10 +10,11 @@ RUN mkdir -p ${CODE}/.gopath
 # allows static linking for alpine
 ENV CGO_ENABLED=0
 ENV GOPATH="${CODE}/.gopath"
+ENV PATH="${PATH}:${GOPATH}/bin"
 
 WORKDIR ${CODE}
 
-CMD ["entrypoint"]
+CMD ["air", "-c", "air.toml"]
 
 # build image
 FROM dev as build

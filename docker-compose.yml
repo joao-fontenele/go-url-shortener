@@ -6,6 +6,10 @@ services:
       context: .
       target: dev
     working_dir: /usr/src/app
+    container_name: go-url-shortener
+    tty: true
+    ports:
+      - 8080:8080
     environment:
       - SSH_AUTH_SOCK=/tmp/ssh_auth.sock
     extra_hosts:
