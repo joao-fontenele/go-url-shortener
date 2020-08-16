@@ -1,6 +1,18 @@
 .PHONY: cli
 cli:
-	docker-compose run --rm --service-ports app sh
+	docker-compose exec app sh
+
+.PHONY: start
+start:
+	docker-compose up -d
+
+.PHONY: stop
+stop:
+	docker-compose down
+
+.PHONY: logs
+logs:
+	docker logs -f --since 1h --tail 300 go-url-shortener
 
 .PHONY: compile
 compile:

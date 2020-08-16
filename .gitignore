@@ -3,3 +3,5 @@ vendor
 .gopath
 bin/*
 data
+*.log
+tmp
