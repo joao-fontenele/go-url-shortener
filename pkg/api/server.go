@@ -3,8 +3,10 @@ package api
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
+
+	"github.com/joao-fontenele/go-url-shortener/pkg/common"
+	"go.uber.org/zap"
 )
 
 type statusResponse struct {
@@ -14,7 +16,8 @@ type statusResponse struct {
 func statusHandler(w http.ResponseWriter, r *http.Request) {
 	data := statusResponse{Running: true}
 	js, err := json.Marshal(data)
-	fmt.Println("GET /status")
+	logger := common.GetLogger()
+	logger.Info("GET /status")
 	if err != nil {
 		fmt.Println("err")
 		http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -26,7 +29,9 @@ func statusHandler(w http.ResponseWriter, r *http.Request) {
 
 // Init sets up the server and it's routes
 func Init() {
+	logger := common.GetLogger()
+	defer logger.Sync()
 	http.HandleFunc("/status", statusHandler)
-	log.Println("listening on port 8080")
-	log.Fatal(http.ListenAndServe(":8080", nil))
+	logger.Info("listening on port 8080")
+	logger.Fatal("error", zap.Error(http.ListenAndServe(":8080", nil)))
 }
