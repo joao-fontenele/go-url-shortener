@@ -27,4 +27,15 @@ FROM alpine as production
 
 RUN apk --no-cache add ca-certificates
 
-COPY --from=build /usr/src/app/main /root/main
+EXPOSE 8080
+
+ENV CODE=/usr/src/app
+
+WORKDIR ${CODE}
+
+RUN mkdir -p ${CODE}/config
+
+COPY --from=build ${CODE}/bin/server ${CODE}/server
+COPY ./config/default.yml ./config/production.yml ${CODE}/config/
+
+CMD ["/usr/src/app/server"]
