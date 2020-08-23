@@ -23,3 +23,7 @@ compile:
 		-o ./bin/server \
 		-ldflags '-extldflags -static' \
 		cmd/server.go
+
+.PHONY: build-image
+build-image:
+	docker build -t go-url-shortener:v0.0.0 .

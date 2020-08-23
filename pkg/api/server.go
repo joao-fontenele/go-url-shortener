@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/joao-fontenele/go-url-shortener/pkg/common"
@@ -29,9 +30,18 @@ func statusHandler(w http.ResponseWriter, r *http.Request) {
 
 // Init sets up the server and it's routes
 func Init() {
+	err := common.LoadConfs()
+	if err != nil {
+		log.Fatal("Failed to load configs: ", err)
+	}
+
 	logger := common.GetLogger()
 	defer logger.Sync()
+
 	http.HandleFunc("/status", statusHandler)
-	logger.Info("listening on port 8080")
-	logger.Fatal("error", zap.Error(http.ListenAndServe(":8080", nil)))
+
+	port := fmt.Sprintf(":%s", common.GetConf().Port)
+
+	logger.Sugar().Infof("listening on port %s", port)
+	logger.Fatal("error", zap.Error(http.ListenAndServe(port, nil)))
 }
