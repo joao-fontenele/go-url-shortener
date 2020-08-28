@@ -7,6 +7,8 @@ services:
       target: dev
     working_dir: /usr/src/app
     container_name: go-url-shortener
+    depends_on:
+     - postgres
     tty: true
     ports:
       - 8080:8080
@@ -17,16 +19,17 @@ services:
     volumes:
       - .:/usr/src/app
       - $SSH_AUTH_SOCK:/tmp/ssh_auth.sock
-  mysql:
-    image: mysql:5
+
+  postgres:
+    image: postgres:12-alpine
     restart: always
     ports:
-      - 3306:3306
+      - 5432:5432
     volumes:
-      - ./data/mysql:/var/lib/mysql
-      - ./docker/mysql:/docker-entrypoint-initdb.d
+      - ./data/postgres:/var/lib/postgresql/data/pgdata
+      - ./docker/postgres:/docker-entrypoint-initdb.d
       - .:/app
     environment:
-      # user will be created in startup sql script in ./docker/mysql/app_shoptarget.sql
-      - MYSQL_DATABASE=shortgopher
-      - MYSQL_ROOT_PASSWORD=shortgopher
+      - PGDATA=/var/lib/postgresql/data/pgdata
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=root
