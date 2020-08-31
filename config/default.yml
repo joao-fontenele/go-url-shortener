@@ -1,5 +1,8 @@
 port: 8080
 database:
-  host: mysql
-  port: 3306
-  name: shortener
+  host: postgres
+  port: 5432
+  name: shortdb
+  user: gopher
+  pass: short
+  sslMode: disable
