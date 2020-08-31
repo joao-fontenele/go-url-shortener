@@ -11,11 +11,12 @@ import (
 var configs Config
 
 type database struct {
-	Host string `mapstructure:"host"`
-	Port string `mapstructure:"port"`
-	Name string `mapstructure:"name"`
-	User string `mapstructure:"user"`
-	Pass string `mapstructure:"pass"`
+	Host    string `mapstructure:"host"`
+	Port    string `mapstructure:"port"`
+	Name    string `mapstructure:"name"`
+	User    string `mapstructure:"user"`
+	Pass    string `mapstructure:"pass"`
+	SSLMode string `mapstructure:"sslMode"`
 }
 
 // Config holds all apllications configs
