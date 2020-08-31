@@ -1,3 +1,5 @@
+export UID := $(shell id -u)
+
 .PHONY: cli
 cli:
 	docker-compose exec app sh

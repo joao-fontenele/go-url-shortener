@@ -10,6 +10,7 @@ services:
     depends_on:
      - postgres
     tty: true
+    user: "${UID}"
     ports:
       - 8080:8080
     environment:
