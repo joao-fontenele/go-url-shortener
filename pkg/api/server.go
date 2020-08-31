@@ -7,6 +7,7 @@ import (
 	"net/http"
 
 	"github.com/joao-fontenele/go-url-shortener/pkg/common"
+	"github.com/joao-fontenele/go-url-shortener/pkg/postgres"
 	"go.uber.org/zap"
 )
 
@@ -37,6 +38,12 @@ func Init() {
 
 	logger := common.GetLogger()
 	defer logger.Sync()
+
+	dbClose, err := postgres.Connect()
+	if err != nil {
+		logger.Fatal("failed to connect to database", zap.Error(err))
+	}
+	defer dbClose()
 
 	http.HandleFunc("/status", statusHandler)
 
