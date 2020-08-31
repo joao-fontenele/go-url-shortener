@@ -7,7 +7,7 @@ import (
 	"github.com/spf13/viper"
 )
 
-// Config is a global variable taht holds all the applications config
+// Config is a global variable that holds all the applications config
 var configs Config
 
 type database struct {
@@ -19,7 +19,7 @@ type database struct {
 	SSLMode string `mapstructure:"sslMode"`
 }
 
-// Config holds all apllications configs
+// Config holds all applications configs
 type Config struct {
 	Env      string
 	Port     string   `mapstructure:"port"`
