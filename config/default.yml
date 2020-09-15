@@ -6,3 +6,8 @@ database:
   user: gopher
   pass: short
   sslMode: disable
+cache:
+  host: redis
+  port: 6379
+
+  linksTTLSeconds: 21600

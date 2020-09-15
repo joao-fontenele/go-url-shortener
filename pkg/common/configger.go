@@ -19,11 +19,19 @@ type database struct {
 	SSLMode string `mapstructure:"sslMode"`
 }
 
+type cache struct {
+	Host            string `mapstructure:"host"`
+	Port            string `mapstructure:"port"`
+	CachePrefix     string `mapstructure:"cachePrefix"`
+	LinksTTLSeconds int    `mapstructure:"linksTTLSeconds"`
+}
+
 // Config holds all applications configs
 type Config struct {
 	Env      string
 	Port     string   `mapstructure:"port"`
 	Database database `mapstructure:"database"`
+	Cache    cache    `mapstructure:"cache"`
 }
 
 // LoadConfs configs from ./config/ yml files depending on APP_ENV.
