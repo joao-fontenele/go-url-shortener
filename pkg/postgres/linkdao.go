@@ -63,6 +63,6 @@ func (d dao) Update(ctx context.Context, l *shortener.Link) (*shortener.Link, er
 	panic("not yet implemented")
 }
 
-func (d dao) Delete(ctx context.Context, slug string) (*shortener.Link, error) {
+func (d dao) Delete(ctx context.Context, slug string) error {
 	panic("not yet implemented")
 }
