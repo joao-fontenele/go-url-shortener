@@ -6,7 +6,7 @@ require (
 	github.com/cosmtrek/air v1.21.2
 	github.com/creack/pty v1.1.11 // indirect
 	github.com/fatih/color v1.9.0 // indirect
-	github.com/go-redis/redis/v8 v8.0.0-beta.9 // indirect
+	github.com/go-redis/redis/v8 v8.0.0-beta.9
 	github.com/google/go-cmp v0.5.2
 	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/jackc/pgproto3/v2 v2.0.4 // indirect
