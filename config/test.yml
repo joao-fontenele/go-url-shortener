@@ -5,3 +5,5 @@ database:
   user: gopher
   pass: short
   sslMode: disable
+cache:
+  cachePrefix: tstgourl
