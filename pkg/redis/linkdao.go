@@ -57,7 +57,7 @@ func (d dao) Insert(ctx context.Context, l *shortener.Link) (*shortener.Link, er
 	return l, err
 }
 
-func (d dao) Update(ctx context.Context, l *shortener.Link) (*shortener.Link, error) {
+func (d dao) Update(ctx context.Context, l *shortener.Link) error {
 	panic("not yet implemented")
 }
 
