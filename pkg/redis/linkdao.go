@@ -34,9 +34,8 @@ func (d dao) Find(ctx context.Context, slug string) (*shortener.Link, error) {
 
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
-			return nil, nil
+			return nil, shortener.ErrLinkNotFound
 		}
-
 		return nil, err
 	}
 
