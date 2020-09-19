@@ -103,9 +103,10 @@ func TestFind(t *testing.T) {
 	}
 
 	tt := []struct {
-		Name string
-		Slug string
-		Want *shortener.Link
+		Name  string
+		Slug  string
+		Want  *shortener.Link
+		Error error
 	}{
 		{
 			Name: "FoundSlug",
@@ -115,11 +116,13 @@ func TestFind(t *testing.T) {
 				Slug:      "a1CDz",
 				CreatedAt: time.Date(2020, 5, 1, 0, 0, 0, 0, time.UTC),
 			},
+			Error: nil,
 		},
 		{
-			Name: "NotFoundSlug",
-			Slug: "niull",
-			Want: nil,
+			Name:  "NotFoundSlug",
+			Slug:  "niull",
+			Want:  nil,
+			Error: shortener.ErrLinkNotFound,
 		},
 	}
 
@@ -129,7 +132,7 @@ func TestFind(t *testing.T) {
 		t.Run(test.Name, func(t *testing.T) {
 			got, err := dao.Find(context.Background(), test.Slug)
 
-			if err != nil {
+			if !errors.Is(err, test.Error) {
 				t.Fatalf("failed to find requested link: %v", err)
 			}
 

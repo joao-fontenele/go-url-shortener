@@ -16,6 +16,6 @@ type Link struct {
 type LinkDao interface {
 	Find(ctx context.Context, slug string) (*Link, error)
 	Insert(ctx context.Context, l *Link) (*Link, error)
-	Update(ctx context.Context, l *Link) (*Link, error)
+	Update(ctx context.Context, l *Link) error
 	Delete(ctx context.Context, slug string) error
 }

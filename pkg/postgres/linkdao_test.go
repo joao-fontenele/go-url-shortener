@@ -2,6 +2,7 @@ package postgres
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os"
 	"testing"
@@ -60,11 +61,9 @@ func TestMain(m *testing.M) {
 
 func TestFind(t *testing.T) {
 	conn := GetConnection()
-	defer func() {
-		if err := truncateDB(conn); err != nil {
-			t.Errorf("error truncating test database tables: %w", err)
-		}
-	}()
+	if err := truncateDB(conn); err != nil {
+		t.Fatalf("error truncating test database tables: %v", err)
+	}
 
 	err := seedDB(conn)
 	if err != nil {
@@ -77,6 +76,7 @@ func TestFind(t *testing.T) {
 		Name string
 		Slug string
 		Want *shortener.Link
+		Err  error
 	}{
 		{
 			Name: "FoundSlug",
@@ -86,11 +86,13 @@ func TestFind(t *testing.T) {
 				Slug:      "a1CDz",
 				CreatedAt: time.Date(2020, 5, 1, 0, 0, 0, 0, time.UTC),
 			},
+			Err: nil,
 		},
 		{
 			Name: "NotFoundSlug",
 			Slug: "niull",
 			Want: nil,
+			Err:  shortener.ErrLinkNotFound,
 		},
 	}
 
@@ -99,7 +101,7 @@ func TestFind(t *testing.T) {
 			var got *shortener.Link
 			got, err = dao.Find(context.Background(), test.Slug)
 
-			if err != nil {
+			if !errors.Is(err, test.Err) {
 				t.Fatalf("failed to find the requested link: %v", err)
 			}
 
@@ -112,37 +114,67 @@ func TestFind(t *testing.T) {
 
 func TestInsert(t *testing.T) {
 	conn := GetConnection()
-	defer func() {
-		if err := truncateDB(conn); err != nil {
-			t.Errorf("error truncating test database tables: %w", err)
-		}
-	}()
+	if err := truncateDB(conn); err != nil {
+		t.Fatalf("error truncating test database tables: %v", err)
+	}
+
+	err := seedDB(conn)
+	if err != nil {
+		t.Fatalf("failed to seed db: %v", err)
+	}
 
 	dao := NewLinkDao(conn)
 
-	link := shortener.Link{
-		URL:  "https://www.google.com?s=golang",
-		Slug: "spd91",
+	tt := []struct {
+		Name  string
+		Link  *shortener.Link
+		Error error
+	}{
+		{
+			Name: "Success",
+			Link: &shortener.Link{
+				URL:  "https://www.google.com?s=golang",
+				Slug: "spd91",
+			},
+			Error: nil,
+		},
+		{
+			Name: "ConflictSlug",
+			Link: &shortener.Link{
+				URL:  "https://www.google.com?s=golang",
+				Slug: "a1CDz",
+			},
+			Error: shortener.ErrLinkExists,
+		},
+		{
+			Name:  "LinkIsNil",
+			Link:  nil,
+			Error: shortener.ErrInvalidLink,
+		},
 	}
-	_, err := dao.Insert(context.Background(), &link)
 
-	if err != nil {
-		t.Fatalf("dao failed to insert %v", err)
-	}
+	for _, test := range tt {
+		t.Run(test.Name, func(t *testing.T) {
+			_, err := dao.Insert(context.Background(), test.Link)
 
-	inserted := shortener.Link{}
+			if !errors.Is(err, test.Error) {
+				t.Fatalf("failed to query new inserted link %v", err)
+			}
 
-	err = conn.QueryRow(
-		context.Background(),
-		"SELECT slug, url, createdAt FROM links WHERE slug=$1",
-		link.Slug,
-	).Scan(&inserted.Slug, &inserted.URL, &inserted.CreatedAt)
+			if err != nil {
+				return
+			}
 
-	if err != nil {
-		t.Fatalf("failed to query new inserted link %v", err)
-	}
+			inserted := shortener.Link{}
+			err = conn.QueryRow(
+				context.Background(),
+				"SELECT slug, url, createdAt FROM links WHERE slug=$1",
+				test.Link.Slug,
+			).Scan(&inserted.Slug, &inserted.URL, &inserted.CreatedAt)
 
-	if diff := cmp.Diff(link, inserted); diff != "" {
-		t.Errorf("failed to fetch expected link (-want +got):\n%s", diff)
+			if diff := cmp.Diff(test.Link, &inserted); diff != "" {
+				t.Errorf("failed to fetch expected link (-want +got):\n%s", diff)
+			}
+		})
 	}
 }

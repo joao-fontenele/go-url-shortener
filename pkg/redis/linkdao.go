@@ -34,9 +34,8 @@ func (d dao) Find(ctx context.Context, slug string) (*shortener.Link, error) {
 
 	if err != nil {
 		if errors.Is(err, redis.Nil) {
-			return nil, nil
+			return nil, shortener.ErrLinkNotFound
 		}
-
 		return nil, err
 	}
 
@@ -57,7 +56,7 @@ func (d dao) Insert(ctx context.Context, l *shortener.Link) (*shortener.Link, er
 	return l, err
 }
 
-func (d dao) Update(ctx context.Context, l *shortener.Link) (*shortener.Link, error) {
+func (d dao) Update(ctx context.Context, l *shortener.Link) error {
 	panic("not yet implemented")
 }
 
