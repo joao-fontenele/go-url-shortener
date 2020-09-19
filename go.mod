@@ -9,6 +9,7 @@ require (
 	github.com/go-redis/redis/v8 v8.0.0-beta.9
 	github.com/google/go-cmp v0.5.2
 	github.com/imdario/mergo v0.3.11 // indirect
+	github.com/jackc/pgconn v1.6.4
 	github.com/jackc/pgproto3/v2 v2.0.4 // indirect
 	github.com/jackc/pgx/v4 v4.8.1
 	github.com/mattn/go-colorable v0.1.7 // indirect
