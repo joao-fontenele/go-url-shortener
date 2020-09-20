@@ -172,6 +172,10 @@ func TestInsert(t *testing.T) {
 				test.Link.Slug,
 			).Scan(&inserted.Slug, &inserted.URL, &inserted.CreatedAt)
 
+			if err != nil {
+				t.Fatalf("Unexpected error querying inserted link: %v", err)
+			}
+
 			if diff := cmp.Diff(test.Link, &inserted); diff != "" {
 				t.Errorf("failed to fetch expected link (-want +got):\n%s", diff)
 			}
