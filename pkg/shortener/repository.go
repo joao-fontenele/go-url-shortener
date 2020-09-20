@@ -28,13 +28,13 @@ func NewLinkRepository(dbDao LinkDao, cacheDao LinkDao) LinkRepository {
 }
 
 func (lr *linkRepository) Find(ctx context.Context, slug string) (*Link, error) {
-	link, err := lr.cacheDao.Find(ctx, slug)
+	link, _ := lr.cacheDao.Find(ctx, slug)
 
 	if link != nil {
 		return link, nil
 	}
 
-	link, err = lr.dbDao.Find(ctx, slug)
+	link, err := lr.dbDao.Find(ctx, slug)
 	if err != nil {
 		return nil, err
 	}
