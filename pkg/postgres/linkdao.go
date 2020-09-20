@@ -18,12 +18,12 @@ type dao struct {
 
 // NewLinkDao instantiates a dao for link in postgres db
 func NewLinkDao(conn *pgxpool.Pool) shortener.LinkDao {
-	return dao{
+	return &dao{
 		conn: conn,
 	}
 }
 
-func (d dao) Find(ctx context.Context, slug string) (*shortener.Link, error) {
+func (d *dao) Find(ctx context.Context, slug string) (*shortener.Link, error) {
 	link := shortener.Link{}
 	err := d.conn.QueryRow(
 		ctx,
@@ -41,7 +41,7 @@ func (d dao) Find(ctx context.Context, slug string) (*shortener.Link, error) {
 	return &link, nil
 }
 
-func (d dao) Insert(ctx context.Context, l *shortener.Link) (*shortener.Link, error) {
+func (d *dao) Insert(ctx context.Context, l *shortener.Link) (*shortener.Link, error) {
 	if l == nil {
 		return nil, fmt.Errorf("Invalid Link. It cannot be nil: %w", shortener.ErrInvalidLink)
 	}
@@ -67,10 +67,10 @@ func (d dao) Insert(ctx context.Context, l *shortener.Link) (*shortener.Link, er
 	return l, nil
 }
 
-func (d dao) Update(ctx context.Context, l *shortener.Link) error {
+func (d *dao) Update(ctx context.Context, l *shortener.Link) error {
 	panic("not yet implemented")
 }
 
-func (d dao) Delete(ctx context.Context, slug string) error {
+func (d *dao) Delete(ctx context.Context, slug string) error {
 	panic("not yet implemented")
 }
