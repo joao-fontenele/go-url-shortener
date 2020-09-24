@@ -1,4 +1,4 @@
-package common
+package configger
 
 import (
 	"fmt"
@@ -34,9 +34,9 @@ type Config struct {
 	Cache    cache    `mapstructure:"cache"`
 }
 
-// LoadConfs configs from ./config/ yml files depending on APP_ENV.
+// Load configs from ./config/ yml files depending on APP_ENV.
 // Order of precedence (local.yml > ${APP_ENV}.yml > default.yml)
-func LoadConfs() error {
+func Load() error {
 	env := os.Getenv("APP_ENV")
 	if env == "" {
 		env = "development"
@@ -70,7 +70,7 @@ func LoadConfs() error {
 	return nil
 }
 
-// GetConf returns previously loaded configs
-func GetConf() Config {
+// Get returns previously loaded configs
+func Get() Config {
 	return configs
 }

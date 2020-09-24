@@ -10,7 +10,7 @@ import (
 
 	"github.com/google/go-cmp/cmp"
 	"github.com/jackc/pgx/v4/pgxpool"
-	"github.com/joao-fontenele/go-url-shortener/pkg/common"
+	"github.com/joao-fontenele/go-url-shortener/pkg/configger"
 	"github.com/joao-fontenele/go-url-shortener/pkg/shortener"
 )
 
@@ -20,13 +20,13 @@ func testMain(m *testing.M) int {
 	// change dir because default pwd for tests are it's parent dir
 	os.Chdir("/usr/src/app")
 
-	err = common.LoadConfs()
+	err = configger.Load()
 	if err != nil {
 		fmt.Println("failed to load configs: %w", err)
 		return 1
 	}
 
-	env := common.GetConf().Env
+	env := configger.Get().Env
 	if env != "test" {
 		fmt.Println("don't run these tests on non dev environment")
 		return 1

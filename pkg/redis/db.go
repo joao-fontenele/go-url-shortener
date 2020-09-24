@@ -5,15 +5,16 @@ import (
 	"fmt"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/joao-fontenele/go-url-shortener/pkg/common"
+	"github.com/joao-fontenele/go-url-shortener/pkg/configger"
+	"github.com/joao-fontenele/go-url-shortener/pkg/logger"
 )
 
 var rdb *redis.Client
 
 // Connect creates a connection to redis
 func Connect() (func() error, error) {
-	logger := common.GetLogger()
-	dbConf := common.GetConf().Cache
+	logger := logger.Get()
+	dbConf := configger.Get().Cache
 	logger.Info("connecting to redis")
 
 	rdb = redis.NewClient(&redis.Options{

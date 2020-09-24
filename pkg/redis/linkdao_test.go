@@ -11,7 +11,7 @@ import (
 
 	"github.com/go-redis/redis/v8"
 	"github.com/google/go-cmp/cmp"
-	"github.com/joao-fontenele/go-url-shortener/pkg/common"
+	"github.com/joao-fontenele/go-url-shortener/pkg/configger"
 	"github.com/joao-fontenele/go-url-shortener/pkg/shortener"
 )
 
@@ -20,13 +20,13 @@ func testMain(m *testing.M) int {
 
 	os.Chdir("/usr/src/app")
 
-	err = common.LoadConfs()
+	err = configger.Load()
 	if err != nil {
 		fmt.Println("failed to load configs: %w", err)
 		return 1
 	}
 
-	env := common.GetConf().Env
+	env := configger.Get().Env
 	if env != "test" {
 		fmt.Println("don't run these tests on non dev environment")
 		return 1
@@ -60,7 +60,7 @@ func seedDB(conn *redis.Client) error {
 
 func truncateDB(conn *redis.Client) error {
 	var cursor uint64
-	cachePrefix := fmt.Sprintf("%s*", common.GetConf().Cache.CachePrefix)
+	cachePrefix := fmt.Sprintf("%s*", configger.Get().Cache.CachePrefix)
 	ctx := context.Background()
 
 	for {
@@ -181,7 +181,7 @@ func TestInsert(t *testing.T) {
 		t.Error("should have set key ttl, but it has no ttl")
 	}
 
-	expectedDur := time.Duration(common.GetConf().Cache.LinksTTLSeconds) * time.Second
+	expectedDur := time.Duration(configger.Get().Cache.LinksTTLSeconds) * time.Second
 	if expectedDur-currTTL > 1 {
 		t.Errorf("ttl is set to the wrong value, (want, got): (%v, %v)", expectedDur, currTTL)
 	}
