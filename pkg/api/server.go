@@ -9,6 +9,7 @@ import (
 	"github.com/joao-fontenele/go-url-shortener/pkg/configger"
 	"github.com/joao-fontenele/go-url-shortener/pkg/logger"
 	"github.com/joao-fontenele/go-url-shortener/pkg/postgres"
+	"github.com/joao-fontenele/go-url-shortener/pkg/redis"
 	"go.uber.org/zap"
 )
 
@@ -45,6 +46,13 @@ func Init() {
 		logger.Fatal("failed to connect to database", zap.Error(err))
 	}
 	defer dbClose()
+
+	redisClose, err := redis.Connect()
+	defer redisClose()
+
+	if err != nil {
+		logger.Fatal("failed to connect to redis", zap.Error(err))
+	}
 
 	http.HandleFunc("/status", statusHandler)
 
