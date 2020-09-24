@@ -6,7 +6,8 @@ import (
 
 	"github.com/jackc/pgx/v4/log/zapadapter"
 	"github.com/jackc/pgx/v4/pgxpool"
-	"github.com/joao-fontenele/go-url-shortener/pkg/common"
+	"github.com/joao-fontenele/go-url-shortener/pkg/configger"
+	"github.com/joao-fontenele/go-url-shortener/pkg/logger"
 	"go.uber.org/zap"
 )
 
@@ -15,10 +16,9 @@ var conn *pgxpool.Pool
 // Connect creates a connection to postgres db
 func Connect() (func(), error) {
 	var err error
-	logger := common.GetLogger()
-	dbConf := common.GetConf().Database
+	logger := logger.Get()
+	dbConf := configger.Get().Database
 	dbURL := fmt.Sprintf(
-		// "postgresql://%s:%s@%s:%s/%s",
 		"postgresql://%s:%s@%s:%s/%s?sslmode=%s",
 		dbConf.User,
 		dbConf.Pass,

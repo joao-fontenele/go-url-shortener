@@ -6,7 +6,8 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/joao-fontenele/go-url-shortener/pkg/common"
+	"github.com/joao-fontenele/go-url-shortener/pkg/configger"
+	"github.com/joao-fontenele/go-url-shortener/pkg/logger"
 	"github.com/joao-fontenele/go-url-shortener/pkg/postgres"
 	"go.uber.org/zap"
 )
@@ -18,7 +19,7 @@ type statusResponse struct {
 func statusHandler(w http.ResponseWriter, r *http.Request) {
 	data := statusResponse{Running: true}
 	js, err := json.Marshal(data)
-	logger := common.GetLogger()
+	logger := logger.Get()
 	logger.Info("GET /status")
 	if err != nil {
 		fmt.Println("err")
@@ -31,12 +32,12 @@ func statusHandler(w http.ResponseWriter, r *http.Request) {
 
 // Init sets up the server and it's routes
 func Init() {
-	err := common.LoadConfs()
+	err := configger.Load()
 	if err != nil {
 		log.Fatal("Failed to load configs: ", err)
 	}
 
-	logger := common.GetLogger()
+	logger := logger.Get()
 	defer logger.Sync()
 
 	dbClose, err := postgres.Connect()
@@ -47,7 +48,7 @@ func Init() {
 
 	http.HandleFunc("/status", statusHandler)
 
-	port := fmt.Sprintf(":%s", common.GetConf().Port)
+	port := fmt.Sprintf(":%s", configger.Get().Port)
 
 	logger.Sugar().Infof("listening on port %s", port)
 	logger.Fatal("error", zap.Error(http.ListenAndServe(port, nil)))

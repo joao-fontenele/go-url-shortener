@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/go-redis/redis/v8"
-	"github.com/joao-fontenele/go-url-shortener/pkg/common"
+	"github.com/joao-fontenele/go-url-shortener/pkg/configger"
 	"github.com/joao-fontenele/go-url-shortener/pkg/shortener"
 )
 
@@ -24,7 +24,7 @@ func NewLinkDao(conn *redis.Client) shortener.LinkDao {
 }
 
 func formatCacheString(slug string) string {
-	prefix := common.GetConf().Cache.CachePrefix
+	prefix := configger.Get().Cache.CachePrefix
 	return fmt.Sprintf("%s^l^%s", prefix, slug)
 }
 
@@ -50,7 +50,7 @@ func (d *dao) Insert(ctx context.Context, l *shortener.Link) (*shortener.Link, e
 		ctx,
 		formatCacheString(l.Slug),
 		val,
-		time.Duration(common.GetConf().Cache.LinksTTLSeconds)*time.Second,
+		time.Duration(configger.Get().Cache.LinksTTLSeconds)*time.Second,
 	).Err()
 
 	return l, err
