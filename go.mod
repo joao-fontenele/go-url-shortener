@@ -6,8 +6,9 @@ require (
 	github.com/cosmtrek/air v1.21.2
 	github.com/creack/pty v1.1.11 // indirect
 	github.com/fatih/color v1.9.0 // indirect
-	github.com/go-ozzo/ozzo-routing v2.1.4+incompatible
+	github.com/go-ozzo/ozzo-routing v2.1.4+incompatible // indirect
 	github.com/go-redis/redis/v8 v8.0.0-beta.9
+	github.com/golang/gddo v0.0.0-20200831202555-721e228c7686 // indirect
 	github.com/google/go-cmp v0.5.2
 	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/jackc/pgconn v1.6.4
