@@ -6,15 +6,19 @@ require (
 	github.com/cosmtrek/air v1.21.2
 	github.com/creack/pty v1.1.11 // indirect
 	github.com/fatih/color v1.9.0 // indirect
+	github.com/go-ozzo/ozzo-routing v2.1.4+incompatible
 	github.com/go-redis/redis/v8 v8.0.0-beta.9
 	github.com/google/go-cmp v0.5.2
 	github.com/imdario/mergo v0.3.11 // indirect
 	github.com/jackc/pgconn v1.6.4
 	github.com/jackc/pgproto3/v2 v2.0.4 // indirect
 	github.com/jackc/pgx/v4 v4.8.1
+	github.com/klauspost/compress v1.11.0 // indirect
 	github.com/mattn/go-colorable v0.1.7 // indirect
 	github.com/pelletier/go-toml v1.8.0 // indirect
+	github.com/qiangxue/fasthttp-routing v0.0.0-20160225050629-6ccdc2a18d87
 	github.com/spf13/viper v1.7.1
+	github.com/valyala/fasthttp v1.16.0
 	go.uber.org/zap v1.15.0
 	golang.org/x/crypto v0.0.0-20200820211705-5c72a883971a // indirect
 	golang.org/x/exp v0.0.0-20200901203048-c4f52b2c50aa // indirect
