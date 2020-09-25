@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"net/http"
 
 	"github.com/joao-fontenele/go-url-shortener/pkg/configger"
 	"github.com/joao-fontenele/go-url-shortener/pkg/logger"
 	"github.com/joao-fontenele/go-url-shortener/pkg/postgres"
 	"github.com/joao-fontenele/go-url-shortener/pkg/redis"
+	routing "github.com/qiangxue/fasthttp-routing"
+	"github.com/valyala/fasthttp"
 	"go.uber.org/zap"
 )
 
@@ -17,18 +18,15 @@ type statusResponse struct {
 	Running bool `json:"running"`
 }
 
-func statusHandler(w http.ResponseWriter, r *http.Request) {
-	data := statusResponse{Running: true}
-	js, err := json.Marshal(data)
+func statusHandler(ctx *routing.Context) error {
 	logger := logger.Get()
 	logger.Info("GET /status")
-	if err != nil {
-		fmt.Println("err")
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
-	w.Header().Set("Content-Type", "application/json")
-	w.Write(js)
+	data := statusResponse{Running: true}
+	b, _ := json.Marshal(data)
+	ctx.SetContentType("application/json")
+	ctx.Write(b)
+
+	return nil
 }
 
 // Init sets up the server and it's routes
@@ -54,10 +52,10 @@ func Init() {
 		logger.Fatal("failed to connect to redis", zap.Error(err))
 	}
 
-	http.HandleFunc("/status", statusHandler)
+	router := routing.New()
+	router.Get("/status", statusHandler)
 
 	port := fmt.Sprintf(":%s", configger.Get().Port)
-
 	logger.Sugar().Infof("listening on port %s", port)
-	logger.Fatal("error", zap.Error(http.ListenAndServe(port, nil)))
+	logger.Fatal("error", zap.Error(fasthttp.ListenAndServe(port, router.HandleRequest)))
 }
