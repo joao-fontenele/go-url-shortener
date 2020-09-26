@@ -18,11 +18,11 @@ func testMain(m *testing.M) int {
 	var err error
 
 	// change dir because default pwd for tests are it's parent dir
-	os.Chdir("/usr/src/app")
+	os.Chdir("../../")
 
 	err = configger.Load()
 	if err != nil {
-		fmt.Println("failed to load configs: %w", err)
+		fmt.Printf("failed to load configs: %v", err)
 		return 1
 	}
 
