@@ -157,7 +157,6 @@ func TestInsert(t *testing.T) {
 	})
 }
 
-// TODO
 func TestDelete(t *testing.T) {
 	slug := "b4zoo"
 	okDelete := func(ctx context.Context, slug string) error {
