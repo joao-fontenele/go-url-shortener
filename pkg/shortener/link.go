@@ -7,9 +7,9 @@ import (
 
 // Link holds the attributes related to shortened link urls
 type Link struct {
-	Slug      string
-	URL       string
-	CreatedAt time.Time
+	Slug      string    `json:"slug"`
+	URL       string    `json:"url"`
+	CreatedAt time.Time `json:"createdAt"`
 }
 
 // LinkDao represents a contract to access a single datastore
