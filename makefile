@@ -35,3 +35,11 @@ compile:
 .PHONY: build-image
 build-image:
 	docker build -t go-url-shortener:v0.0.0 .
+
+.PHONY: cli-db
+cli-db:
+	docker-compose exec postgres psql -U gopher shortdb
+
+.PHONY: test
+test:
+	APP_ENV=test go test -v ./...
