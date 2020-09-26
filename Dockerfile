@@ -10,7 +10,7 @@ RUN mkdir -p ${CODE}/.gopath
 # allows static linking for alpine
 ENV CGO_ENABLED=0
 ENV GOPATH="${CODE}/.gopath"
-ENV GOCACHE="${CODE}/tmp"
+ENV GOCACHE="/tmp/go-build"
 ENV PATH="${PATH}:${GOPATH}/bin"
 
 WORKDIR ${CODE}
