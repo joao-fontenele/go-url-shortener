@@ -1,5 +1,11 @@
 export UID := $(shell id -u)
 
+.PHONY: build
+build:
+	# maybe it's still necessary to install binaries (like air) in addition to run this target
+	docker-compose build
+	docker-compose run --rm --no-deps app go mod download
+
 .PHONY: cli
 cli:
 	docker-compose exec app sh
