@@ -82,5 +82,8 @@ func (ls *linkService) Create(ctx context.Context, URL string) (*Link, error) {
 
 func (ls *linkService) GetURL(ctx context.Context, slug string) (string, error) {
 	l, err := ls.repo.Find(ctx, slug)
+	if err != nil {
+		return "", err
+	}
 	return l.URL, err
 }

@@ -1,5 +1,11 @@
 export UID := $(shell id -u)
 
+.PHONY: build
+build:
+	# maybe it's still necessary to install binaries (like air) in addition to run this target
+	docker-compose build
+	docker-compose run --rm --no-deps app go mod download
+
 .PHONY: cli
 cli:
 	docker-compose exec app sh
@@ -29,3 +35,11 @@ compile:
 .PHONY: build-image
 build-image:
 	docker build -t go-url-shortener:v0.0.0 .
+
+.PHONY: cli-db
+cli-db:
+	docker-compose exec postgres psql -U gopher shortdb
+
+.PHONY: test
+test:
+	APP_ENV=test go test -v ./...

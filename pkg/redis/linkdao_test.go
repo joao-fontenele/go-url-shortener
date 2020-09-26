@@ -18,11 +18,11 @@ import (
 func testMain(m *testing.M) int {
 	var err error
 
-	os.Chdir("/usr/src/app")
+	os.Chdir("../../")
 
 	err = configger.Load()
 	if err != nil {
-		fmt.Println("failed to load configs: %w", err)
+		fmt.Printf("failed to load configs: %v", err)
 		return 1
 	}
 

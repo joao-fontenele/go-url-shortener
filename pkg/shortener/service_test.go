@@ -131,20 +131,41 @@ func TestCreate(t *testing.T) {
 }
 
 func testGetURL(t *testing.T) {
-	fakeRepo := mocks.FakeLinkRepo{
-		FindFn: func(ctx context.Context, slug string) (*shortener.Link, error) {
-			return &shortener.Link{URL: "https:/www.google.com", Slug: "dummy"}, nil
-		},
-	}
+	t.Run("LinkFound", func(t *testing.T) {
+		fakeRepo := mocks.FakeLinkRepo{
+			FindFn: func(ctx context.Context, slug string) (*shortener.Link, error) {
+				return &shortener.Link{URL: "https:/www.google.com", Slug: "dummy"}, nil
+			},
+		}
 
-	s := shortener.NewLinkService(&fakeRepo)
-	URL, err := s.GetURL(context.Background(), "dummy")
+		s := shortener.NewLinkService(&fakeRepo)
+		URL, err := s.GetURL(context.Background(), "dummy")
 
-	if err != nil {
-		t.Fatalf("Unexpected error from GetURL: %v", err)
-	}
+		if err != nil {
+			t.Fatalf("Unexpected error from GetURL: %v", err)
+		}
 
-	if URL != "https:/www.google.com" {
-		t.Errorf("Expected URL to be 'https://www.google.com', but got: %s", URL)
-	}
+		if URL != "https:/www.google.com" {
+			t.Errorf("Expected URL to be 'https://www.google.com', but got: %s", URL)
+		}
+	})
+
+	t.Run("LinkNotFound", func(t *testing.T) {
+		fakeRepo := mocks.FakeLinkRepo{
+			FindFn: func(ctx context.Context, slug string) (*shortener.Link, error) {
+				return nil, shortener.ErrLinkNotFound
+			},
+		}
+
+		s := shortener.NewLinkService(&fakeRepo)
+		URL, err := s.GetURL(context.Background(), "dummy")
+
+		if !errors.Is(err, shortener.ErrLinkNotFound) {
+			t.Fatalf("Unexpected error from GetURL: %v", err)
+		}
+
+		if URL != "" {
+			t.Errorf("Expected URL to be '', but got: %s", URL)
+		}
+	})
 }
