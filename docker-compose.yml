@@ -9,6 +9,7 @@ services:
     container_name: go-url-shortener
     depends_on:
      - postgres
+     - redis
     tty: true
     user: "${UID}"
     ports:
