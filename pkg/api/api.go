@@ -3,13 +3,13 @@ package api
 import (
 	"log"
 
-	"github.com/joao-fontenele/go-url-shortener/pkg/api/router"
+	"github.com/fasthttp/router"
+	myRouter "github.com/joao-fontenele/go-url-shortener/pkg/api/router"
 	"github.com/joao-fontenele/go-url-shortener/pkg/configger"
 	"github.com/joao-fontenele/go-url-shortener/pkg/logger"
 	"github.com/joao-fontenele/go-url-shortener/pkg/postgres"
 	"github.com/joao-fontenele/go-url-shortener/pkg/redis"
 	"github.com/joao-fontenele/go-url-shortener/pkg/shortener"
-	routing "github.com/qiangxue/fasthttp-routing"
 	"go.uber.org/zap"
 )
 
@@ -47,7 +47,7 @@ func newLinkService() shortener.LinkService {
 }
 
 // New loads configs, sets up connection, and api routes
-func New() *routing.Router {
+func New() *router.Router {
 	loadConfs()
 
 	logger := logger.Get()
@@ -56,7 +56,7 @@ func New() *routing.Router {
 	connectCache(logger)
 
 	ls := newLinkService()
-	router := router.New(ls)
+	r := myRouter.New(ls)
 
-	return router
+	return r
 }

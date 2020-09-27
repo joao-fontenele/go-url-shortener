@@ -8,7 +8,7 @@ import (
 
 	"github.com/joao-fontenele/go-url-shortener/pkg/api/response"
 	"github.com/joao-fontenele/go-url-shortener/pkg/shortener"
-	routing "github.com/qiangxue/fasthttp-routing"
+	"github.com/valyala/fasthttp"
 )
 
 // NewLinkReqBody represents a request body received by the NewLink request handler
@@ -22,7 +22,7 @@ type ShortenerHandler struct {
 }
 
 // NewLink is a handler for creating a new Link
-func (h *ShortenerHandler) NewLink(ctx *routing.Context) error {
+func (h *ShortenerHandler) NewLink(ctx *fasthttp.RequestCtx) {
 	ctx.SetContentType("application/json")
 
 	var body NewLinkReqBody
@@ -33,7 +33,7 @@ func (h *ShortenerHandler) NewLink(ctx *routing.Context) error {
 		ctx.SetStatusCode(status)
 		b, _ := json.Marshal(response.HTTPErr{Message: "Invalid json in request body", StatusCode: status})
 		ctx.Write(b)
-		return nil
+		return
 	}
 
 	l, err := h.LinkService.Create(ctx, body.URL)
@@ -43,20 +43,20 @@ func (h *ShortenerHandler) NewLink(ctx *routing.Context) error {
 		errMessage := fmt.Sprintf("Error creating link: %s", err.Error())
 		b, _ := json.Marshal(response.HTTPErr{Message: errMessage, StatusCode: status})
 		ctx.Write(b)
-		return nil
+		return
 	}
 
 	ctx.SetStatusCode(http.StatusCreated)
 	b, _ := json.Marshal(l)
 	ctx.Write(b)
 
-	return nil
+	return
 }
 
 // Redirect is a handler for redirecting to a Link.URL, given a slug from path
-func (h *ShortenerHandler) Redirect(ctx *routing.Context) error {
+func (h *ShortenerHandler) Redirect(ctx *fasthttp.RequestCtx) {
 	ctx.SetContentType("application/json")
-	slug := ctx.Param("slug")
+	slug := fmt.Sprintf("%s", ctx.UserValue("slug"))
 	URL, err := h.LinkService.GetURL(ctx, slug)
 	if err != nil {
 		var status int
@@ -73,9 +73,9 @@ func (h *ShortenerHandler) Redirect(ctx *routing.Context) error {
 		ctx.SetStatusCode(status)
 		b, _ := json.Marshal(response.HTTPErr{Message: errMessage, StatusCode: status})
 		ctx.Write(b)
-		return nil
+		return
 	}
 
 	ctx.Redirect(URL, http.StatusMovedPermanently)
-	return nil
+	return
 }

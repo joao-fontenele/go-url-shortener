@@ -17,5 +17,5 @@ func main() {
 
 	port := fmt.Sprintf(":%s", configger.Get().Port)
 	logger.Sugar().Infof("listening on port %s", port)
-	logger.Fatal("error", zap.Error(fasthttp.ListenAndServe(port, router.HandleRequest)))
+	logger.Fatal("error", zap.Error(fasthttp.ListenAndServe(port, router.Handler)))
 }
