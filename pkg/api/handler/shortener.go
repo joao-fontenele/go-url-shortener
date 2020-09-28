@@ -11,8 +11,8 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-// NewLinkReqBody represents a request body received by the NewLink request handler
-type NewLinkReqBody struct {
+// newLinkReqBody represents a request body received by the NewLink request handler
+type newLinkReqBody struct {
 	URL string `json:"url"`
 }
 
@@ -25,7 +25,7 @@ type ShortenerHandler struct {
 func (h *ShortenerHandler) NewLink(ctx *fasthttp.RequestCtx) {
 	ctx.SetContentType("application/json")
 
-	var body NewLinkReqBody
+	var body newLinkReqBody
 	err := json.Unmarshal(ctx.PostBody(), &body)
 
 	if err != nil {
