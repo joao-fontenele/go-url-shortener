@@ -14,7 +14,7 @@ func New(linkService shortener.LinkService) *router.Router {
 	router.GET("/internal/status", internalHandler.StatusHandler)
 
 	linkHandler := &handler.ShortenerHandler{LinkService: linkService}
-	router.POST("/new", linkHandler.NewLink)
+	router.POST("/links", linkHandler.NewLink)
 	router.GET("/{slug}", linkHandler.Redirect)
 
 	return router
