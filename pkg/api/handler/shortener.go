@@ -38,10 +38,19 @@ func (h *ShortenerHandler) NewLink(ctx *fasthttp.RequestCtx) {
 
 	l, err := h.LinkService.Create(ctx, body.URL)
 	if err != nil {
-		status := http.StatusInternalServerError
-		ctx.SetStatusCode(status)
-		errMessage := fmt.Sprintf("Error creating link: %s", err.Error())
+		var status int
+		var errMessage string
+
+		if errors.Is(err, shortener.ErrInvalidLink) {
+			status = http.StatusBadRequest
+			errMessage = err.Error()
+		} else {
+			status = http.StatusInternalServerError
+			errMessage = fmt.Sprintf("Error creating link: %s", err.Error())
+		}
+
 		b, _ := json.Marshal(response.HTTPErr{Message: errMessage, StatusCode: status})
+		ctx.SetStatusCode(status)
 		ctx.Write(b)
 		return
 	}
