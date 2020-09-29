@@ -118,6 +118,20 @@ func TestInsert(t *testing.T) {
 		return nil, errors.New("UnexpectedErr")
 	}
 
+	t.Run("InvalidLink", func(t *testing.T) {
+		db := &mocks.FakeLinkDao{}
+		cache := &mocks.FakeLinkDao{}
+
+		r := shortener.NewLinkRepository(db, cache)
+
+		invalid := &shortener.Link{}
+		_, err := r.Insert(context.Background(), invalid)
+
+		if !errors.Is(err, shortener.ErrInvalidLink) {
+			t.Errorf("Expected err to be %v, but got %v", shortener.ErrInvalidLink, err)
+		}
+	})
+
 	t.Run("DbFail", func(t *testing.T) {
 		db := &mocks.FakeLinkDao{InsertFn: failInsert}
 		cache := &mocks.FakeLinkDao{InsertFn: okInsert}
