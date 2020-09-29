@@ -105,14 +105,32 @@ func TestFind(t *testing.T) {
 }
 
 func TestInsert(t *testing.T) {
-	sampleLink := &shortener.Link{}
+	sampleLink := &shortener.Link{
+		URL:       "https://www.google.com/?search=Google",
+		Slug:      "aaaaa",
+		CreatedAt: time.Now(),
+	}
 	okInsert := func(ctx context.Context, l *shortener.Link) (*shortener.Link, error) {
 		return sampleLink, nil
 	}
 
 	failInsert := func(ctx context.Context, l *shortener.Link) (*shortener.Link, error) {
-		return nil, shortener.ErrInvalidLink
+		return nil, errors.New("UnexpectedErr")
 	}
+
+	t.Run("InvalidLink", func(t *testing.T) {
+		db := &mocks.FakeLinkDao{}
+		cache := &mocks.FakeLinkDao{}
+
+		r := shortener.NewLinkRepository(db, cache)
+
+		invalid := &shortener.Link{}
+		_, err := r.Insert(context.Background(), invalid)
+
+		if !errors.Is(err, shortener.ErrInvalidLink) {
+			t.Errorf("Expected err to be %v, but got %v", shortener.ErrInvalidLink, err)
+		}
+	})
 
 	t.Run("DbFail", func(t *testing.T) {
 		db := &mocks.FakeLinkDao{InsertFn: failInsert}

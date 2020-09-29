@@ -130,7 +130,7 @@ func TestCreate(t *testing.T) {
 	})
 }
 
-func testGetURL(t *testing.T) {
+func TestGetURL(t *testing.T) {
 	t.Run("LinkFound", func(t *testing.T) {
 		fakeRepo := mocks.FakeLinkRepo{
 			FindFn: func(ctx context.Context, slug string) (*shortener.Link, error) {

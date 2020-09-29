@@ -43,3 +43,7 @@ cli-db:
 .PHONY: test
 test:
 	APP_ENV=test go test -v ./...
+
+.PHONY: test-ci
+test-ci:
+	docker-compose run --rm app make test

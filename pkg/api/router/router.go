@@ -1,21 +1,21 @@
 package router
 
 import (
+	"github.com/fasthttp/router"
 	"github.com/joao-fontenele/go-url-shortener/pkg/api/handler"
 	"github.com/joao-fontenele/go-url-shortener/pkg/shortener"
-	routing "github.com/qiangxue/fasthttp-routing"
 )
 
 // New configures routes and it's handlers, and return it
-func New(linkService shortener.LinkService) *routing.Router {
-	router := routing.New()
+func New(linkService shortener.LinkService) *router.Router {
+	router := router.New()
 
 	internalHandler := &handler.InternalHandler{}
-	router.Get("/internal/status", internalHandler.StatusHandler)
+	router.GET("/internal/status", internalHandler.StatusHandler)
 
 	linkHandler := &handler.ShortenerHandler{LinkService: linkService}
-	router.Post("/new", linkHandler.NewLink)
-	router.Get("/<slug>", linkHandler.Redirect)
+	router.POST("/links", linkHandler.NewLink)
+	router.GET("/{slug}", linkHandler.Redirect)
 
 	return router
 }

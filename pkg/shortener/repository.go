@@ -42,7 +42,12 @@ func (lr *linkRepository) Find(ctx context.Context, slug string) (*Link, error) 
 }
 
 func (lr *linkRepository) Insert(ctx context.Context, l *Link) (*Link, error) {
-	_, err := lr.dbDao.Insert(ctx, l)
+	err := l.Validate()
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = lr.dbDao.Insert(ctx, l)
 	if err != nil {
 		return l, err
 	}

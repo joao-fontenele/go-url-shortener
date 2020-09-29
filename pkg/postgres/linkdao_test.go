@@ -146,11 +146,6 @@ func TestInsert(t *testing.T) {
 			},
 			Error: shortener.ErrLinkExists,
 		},
-		{
-			Name:  "LinkIsNil",
-			Link:  nil,
-			Error: shortener.ErrInvalidLink,
-		},
 	}
 
 	for _, test := range tt {

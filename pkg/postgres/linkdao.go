@@ -3,7 +3,6 @@ package postgres
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/jackc/pgconn"
@@ -42,10 +41,6 @@ func (d *dao) Find(ctx context.Context, slug string) (*shortener.Link, error) {
 }
 
 func (d *dao) Insert(ctx context.Context, l *shortener.Link) (*shortener.Link, error) {
-	if l == nil {
-		return nil, fmt.Errorf("Invalid Link. It cannot be nil: %w", shortener.ErrInvalidLink)
-	}
-
 	var createdAt time.Time
 	err := d.conn.QueryRow(
 		ctx,

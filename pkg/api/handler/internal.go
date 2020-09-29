@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 
 	"github.com/joao-fontenele/go-url-shortener/pkg/api/response"
-	routing "github.com/qiangxue/fasthttp-routing"
+	"github.com/valyala/fasthttp"
 )
 
 // InternalHandler will handle internal, non public requests
@@ -15,7 +15,7 @@ type InternalHandler struct {
 var staticResponseCache []byte
 
 // StatusHandler handles requests to api's status route
-func (h *InternalHandler) StatusHandler(ctx *routing.Context) error {
+func (h *InternalHandler) StatusHandler(ctx *fasthttp.RequestCtx) {
 	ctx.SetContentType("application/json")
 
 	if len(staticResponseCache) == 0 {
@@ -24,5 +24,4 @@ func (h *InternalHandler) StatusHandler(ctx *routing.Context) error {
 	}
 
 	ctx.Write(staticResponseCache)
-	return nil
 }
