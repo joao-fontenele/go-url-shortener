@@ -105,13 +105,17 @@ func TestFind(t *testing.T) {
 }
 
 func TestInsert(t *testing.T) {
-	sampleLink := &shortener.Link{}
+	sampleLink := &shortener.Link{
+		URL:       "https://www.google.com/?search=Google",
+		Slug:      "aaaaa",
+		CreatedAt: time.Now(),
+	}
 	okInsert := func(ctx context.Context, l *shortener.Link) (*shortener.Link, error) {
 		return sampleLink, nil
 	}
 
 	failInsert := func(ctx context.Context, l *shortener.Link) (*shortener.Link, error) {
-		return nil, shortener.ErrInvalidLink
+		return nil, errors.New("UnexpectedErr")
 	}
 
 	t.Run("DbFail", func(t *testing.T) {
