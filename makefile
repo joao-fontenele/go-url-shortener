@@ -36,6 +36,10 @@ compile:
 build-image:
 	docker build -t go-url-shortener:v0.0.0 .
 
+.PHONY: init-db
+init-db:
+	PGPASSWORD=root psql -h postgres -U root -a -f ./docker/postgres/init.sql
+
 .PHONY: cli-db
 cli-db:
 	docker-compose exec postgres psql -U gopher shortdb
@@ -43,7 +47,3 @@ cli-db:
 .PHONY: test
 test:
 	APP_ENV=test go test -v ./...
-
-.PHONY: test-ci
-test-ci:
-	docker-compose run --rm app make test
