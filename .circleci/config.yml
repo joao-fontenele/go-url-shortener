@@ -18,8 +18,20 @@ jobs:
       - run: echo 127.0.0.1 redis | sudo tee -a /etc/hosts
       - run: cat /etc/hosts
 
+      # create pg db schema
       - run: sudo apt-get update && sudo apt-get install postgresql-client
       - run: make init-db
 
       - run: go get -v -t ./...
-      - run: make test
+
+      - run:
+          name: Setup Code Climate test-reporter
+          command: |
+            curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
+            chmod +x ./cc-test-reporter
+      - run:
+          name: Run Test Coverage
+          command: |
+            ./cc-test-reporter before-build
+            make coverage
+            ./cc-test-reporter after-build --prefix github.com/joao-fontenele/go-url-shortener/ --coverage-input-type gocov --exit-code $? c.out

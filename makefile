@@ -47,3 +47,10 @@ cli-db:
 .PHONY: test
 test:
 	APP_ENV=test go test -v ./...
+
+.PHONY: coverage
+coverage:
+	rm -fr coverage
+	mkdir -p coverage
+	APP_ENV=test go test -coverprofile=./c.out ./...
+	go tool cover -html=./c.out -o coverage/coverage.html
