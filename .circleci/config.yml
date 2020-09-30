@@ -1,0 +1,25 @@
+# Check https://circleci.com/docs/2.0/language-go/ for more details
+version: 2
+jobs:
+  build:
+    docker:
+      - image: circleci/golang:1.14
+      - image: postgres:12-alpine
+        environment:
+          POSTGRES_PASSWORD: root
+          POSTGRES_USER: root
+      - image: redis:5.0-alpine
+
+    working_directory: ~/app
+    steps:
+      - checkout
+
+      - run: echo 127.0.0.1 postgres | sudo tee -a /etc/hosts
+      - run: echo 127.0.0.1 redis | sudo tee -a /etc/hosts
+      - run: cat /etc/hosts
+
+      - run: sudo apt-get update && sudo apt-get install postgresql-client
+      - run: make init-db
+
+      - run: go get -v -t ./...
+      - run: make test
