@@ -185,6 +185,12 @@ func TestNewLink(t *testing.T) {
 			WantStatusCode: http.StatusBadRequest,
 		},
 		{
+			Name:           "InvalidJSON",
+			ReqBody:        []byte(`{"url":"https://link.exists.com",`),
+			WantBody:       []byte(`{"message":"Invalid json in request body","statusCode":400}`),
+			WantStatusCode: http.StatusBadRequest,
+		},
+		{
 			Name:           "LinkExists",
 			ReqBody:        []byte(`{"url":"https://link.exists.com"}`),
 			WantBody:       []byte(`{"message":"Error creating link: Link's slug already exists","statusCode":500}`),
