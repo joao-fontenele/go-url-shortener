@@ -58,10 +58,6 @@ func (ls *linkService) GetNewSlug(ctx context.Context, size int) (string, error)
 		}
 
 		if attempt > maxNewSlugAttempts {
-			if err != nil {
-				return "", err
-			}
-
 			return "", ErrLinkExists
 		}
 	}
