@@ -14,7 +14,12 @@ func New(linkService shortener.LinkService) *router.Router {
 	router := router.New()
 
 	internalHandler := &handler.InternalHandler{}
-	router.GET("/internal/status", middleware.Logger(internalHandler.StatusHandler))
+	router.GET(
+		"/internal/status",
+		middleware.Logger(
+			middleware.Metrics(internalHandler.StatusHandler),
+		),
+	)
 	router.GET(
 		"/internal/metrics",
 		middleware.Logger(
@@ -23,8 +28,18 @@ func New(linkService shortener.LinkService) *router.Router {
 	)
 
 	linkHandler := &handler.ShortenerHandler{LinkService: linkService}
-	router.POST("/links", middleware.Logger(linkHandler.NewLink))
-	router.GET("/{slug}", middleware.Logger(linkHandler.Redirect))
+	router.POST(
+		"/links",
+		middleware.Logger(
+			middleware.Metrics(linkHandler.NewLink),
+		),
+	)
+	router.GET(
+		"/{slug}",
+		middleware.Logger(
+			middleware.Metrics(linkHandler.Redirect),
+		),
+	)
 
 	return router
 }

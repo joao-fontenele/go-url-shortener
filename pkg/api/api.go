@@ -7,6 +7,7 @@ import (
 	myRouter "github.com/joao-fontenele/go-url-shortener/pkg/api/router"
 	"github.com/joao-fontenele/go-url-shortener/pkg/configger"
 	"github.com/joao-fontenele/go-url-shortener/pkg/logger"
+	"github.com/joao-fontenele/go-url-shortener/pkg/metrics"
 	"github.com/joao-fontenele/go-url-shortener/pkg/postgres"
 	"github.com/joao-fontenele/go-url-shortener/pkg/redis"
 	"github.com/joao-fontenele/go-url-shortener/pkg/shortener"
@@ -46,6 +47,10 @@ func newLinkService() shortener.LinkService {
 	return shortener.NewLinkService(linkRepo)
 }
 
+func initMetrics() {
+	metrics.Init()
+}
+
 // New loads configs, sets up connection, and api routes
 func New() *router.Router {
 	loadConfs()
@@ -54,6 +59,8 @@ func New() *router.Router {
 
 	connectDB(logger)
 	connectCache(logger)
+
+	initMetrics()
 
 	ls := newLinkService()
 	r := myRouter.New(ls)
