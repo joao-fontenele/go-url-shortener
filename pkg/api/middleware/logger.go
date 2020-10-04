@@ -29,6 +29,7 @@ func Logger(next fasthttp.RequestHandler) fasthttp.RequestHandler {
 		)
 		defer func() {
 			elapsed := time.Since(ctx.ConnTime()).Seconds()
+			statusCode := ctx.Response.StatusCode()
 			l.Info(
 				"Request ended",
 				reqID,
@@ -36,6 +37,7 @@ func Logger(next fasthttp.RequestHandler) fasthttp.RequestHandler {
 				remoteAddr,
 				method,
 				uri,
+				zap.Int("statusCode", statusCode),
 				zap.Float64("elapsedSeconds", elapsed),
 			)
 		}()
