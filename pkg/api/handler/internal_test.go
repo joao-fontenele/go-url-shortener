@@ -3,16 +3,38 @@ package handler_test
 import (
 	"bytes"
 	"context"
+	"fmt"
 	"io/ioutil"
 	"net"
 	"net/http"
+	"os"
 	"testing"
 
 	"github.com/joao-fontenele/go-url-shortener/pkg/api/router"
+	"github.com/joao-fontenele/go-url-shortener/pkg/configger"
 	"github.com/joao-fontenele/go-url-shortener/pkg/mocks"
 	"github.com/valyala/fasthttp"
 	"github.com/valyala/fasthttp/fasthttputil"
 )
+
+func testMain(m *testing.M) int {
+	var err error
+
+	// change dir because default pwd for tests are it's parent dir
+	os.Chdir("../../../")
+
+	err = configger.Load()
+	if err != nil {
+		fmt.Printf("failed to load configs: %v", err)
+		return 1
+	}
+
+	return m.Run()
+}
+
+func TestMain(m *testing.M) {
+	os.Exit(testMain(m))
+}
 
 func TestInternalHandler(t *testing.T) {
 	linkService := &mocks.FakeLinkService{}
