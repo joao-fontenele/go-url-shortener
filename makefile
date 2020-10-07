@@ -8,7 +8,7 @@ build:
 
 .PHONY: cli
 cli:
-	docker-compose exec app sh
+	docker-compose run --rm --no-deps app sh
 
 .PHONY: start
 start:
