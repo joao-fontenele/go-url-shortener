@@ -38,11 +38,13 @@ func connectCache(logger *zap.Logger) {
 func newLinkService() shortener.LinkService {
 	dbConn := postgres.GetConnection()
 	dbDao := postgres.NewLinkDao(dbConn)
+	dbWithMetricsDao := metrics.NewLinkDao(dbDao, "db")
 
 	cacheConn := redis.GetConnection()
 	cacheDao := redis.NewLinkDao(cacheConn)
+	cacheWithMetricsDao := metrics.NewLinkDao(cacheDao, "cache")
 
-	linkRepo := shortener.NewLinkRepository(dbDao, cacheDao)
+	linkRepo := shortener.NewLinkRepository(dbWithMetricsDao, cacheWithMetricsDao)
 
 	return shortener.NewLinkService(linkRepo)
 }
