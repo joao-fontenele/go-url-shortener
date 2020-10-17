@@ -43,7 +43,6 @@ func Load() error {
 	}
 
 	v := viper.New()
-	v.SetEnvPrefix("APP")
 	v.Set("env", env)
 	v.AddConfigPath(".")
 	v.AutomaticEnv()
