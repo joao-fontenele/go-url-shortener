@@ -1,2 +1,8 @@
+database:
+  # from env vars
+  connectURL: DATABASE_URL
+  sslMode: true
 cache:
   cachePrefix: pgu
+  # from env vars
+  connectURL: REDIS_URL
