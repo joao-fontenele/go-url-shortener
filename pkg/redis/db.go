@@ -22,7 +22,7 @@ func Connect() (func() error, error) {
 	if dbConf.ConnectURL != "" {
 		connectURL = dbConf.ConnectURL
 	} else {
-		connectURL = fmt.Sprintf("%s:%s", dbConf.Host, dbConf.Port)
+		connectURL = fmt.Sprintf("redis://%s:%s", dbConf.Host, dbConf.Port)
 	}
 
 	options, err := redis.ParseURL(connectURL)

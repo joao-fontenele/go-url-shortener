@@ -31,13 +31,17 @@ func New(linkService shortener.LinkService) *router.Router {
 	router.POST(
 		"/links",
 		middleware.Logger(
-			middleware.Metrics(linkHandler.NewLink),
+			middleware.Metrics(
+				middleware.Cors(linkHandler.NewLink),
+			),
 		),
 	)
 	router.GET(
 		"/{slug}",
 		middleware.Logger(
-			middleware.Metrics(linkHandler.Redirect),
+			middleware.Metrics(
+				middleware.Cors(linkHandler.Redirect),
+			),
 		),
 	)
 
