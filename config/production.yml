@@ -1,2 +1,4 @@
+database:
+  sslMode: require
 cache:
   cachePrefix: pgu

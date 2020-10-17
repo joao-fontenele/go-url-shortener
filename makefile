@@ -54,3 +54,12 @@ coverage:
 	mkdir -p coverage
 	APP_ENV=test go test -coverprofile=./c.out ./...
 	go tool cover -html=./c.out -o coverage/coverage.html
+
+##############
+### Deploy ###
+##############
+
+.PHONY: deploy
+deploy:
+	heroku container:push web
+	heroku container:release web

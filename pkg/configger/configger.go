@@ -11,15 +11,17 @@ import (
 var configs Config
 
 type database struct {
-	Host    string `mapstructure:"host"`
-	Port    string `mapstructure:"port"`
-	Name    string `mapstructure:"name"`
-	User    string `mapstructure:"user"`
-	Pass    string `mapstructure:"pass"`
-	SSLMode string `mapstructure:"sslMode"`
+	ConnectURL string `mapstructure:"connectURL"`
+	Host       string `mapstructure:"host"`
+	Port       string `mapstructure:"port"`
+	Name       string `mapstructure:"name"`
+	User       string `mapstructure:"user"`
+	Pass       string `mapstructure:"pass"`
+	SSLMode    string `mapstructure:"sslMode"`
 }
 
 type cache struct {
+	ConnectURL      string `mapstructure:"connectURL"`
 	Host            string `mapstructure:"host"`
 	Port            string `mapstructure:"port"`
 	CachePrefix     string `mapstructure:"cachePrefix"`
@@ -28,10 +30,11 @@ type cache struct {
 
 // Config holds all applications configs
 type Config struct {
-	Env      string
-	Port     string   `mapstructure:"port"`
-	Database database `mapstructure:"database"`
-	Cache    cache    `mapstructure:"cache"`
+	Env          string
+	DBConnectURL string   `mapstructure:"dbURL"`
+	Port         string   `mapstructure:"port"`
+	Database     database `mapstructure:"database"`
+	Cache        cache    `mapstructure:"cache"`
 }
 
 // Load configs from ./config/ yml files depending on APP_ENV.
@@ -43,12 +46,15 @@ func Load() error {
 	}
 
 	v := viper.New()
-	v.SetEnvPrefix("APP")
 	v.Set("env", env)
 	v.AddConfigPath(".")
+	v.SetEnvPrefix("")
 	v.AutomaticEnv()
 
 	v.SetConfigType("yaml")
+
+	v.SetDefault("cache.connectURL", os.Getenv("REDIS_URL"))
+	v.SetDefault("database.connectURL", os.Getenv("DATABASE_URL"))
 
 	// Load default configs file
 	v.SetConfigName("config/default")
