@@ -18,19 +18,25 @@ func Connect() (func(), error) {
 	var err error
 	logger := logger.Get()
 	dbConf := configger.Get().Database
-	dbURL := fmt.Sprintf(
-		"postgresql://%s:%s@%s:%s/%s?sslmode=%s",
-		dbConf.User,
-		dbConf.Pass,
-		dbConf.Host,
-		dbConf.Port,
-		dbConf.Name,
-		dbConf.SSLMode,
-	)
 
-	poolConfig, err := pgxpool.ParseConfig(dbURL)
+	var connectURL string
+	if dbConf.ConnectURL != "" {
+		connectURL = fmt.Sprintf("%s?sslmode=%s", dbConf.ConnectURL, dbConf.SSLMode)
+	} else {
+		connectURL = fmt.Sprintf(
+			"postgresql://%s:%s@%s:%s/%s?sslmode=%s",
+			dbConf.User,
+			dbConf.Pass,
+			dbConf.Host,
+			dbConf.Port,
+			dbConf.Name,
+			dbConf.SSLMode,
+		)
+	}
+
+	poolConfig, err := pgxpool.ParseConfig(connectURL)
 	if err != nil {
-		logger.Fatal("failed to parse dburl", zap.String("dbUrl", dbURL), zap.Error(err))
+		logger.Fatal("failed to parse dburl", zap.String("dbUrl", connectURL), zap.Error(err))
 	}
 	poolConfig.ConnConfig.Logger = zapadapter.NewLogger(logger)
 
