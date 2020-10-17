@@ -11,15 +11,17 @@ import (
 var configs Config
 
 type database struct {
-	Host    string `mapstructure:"host"`
-	Port    string `mapstructure:"port"`
-	Name    string `mapstructure:"name"`
-	User    string `mapstructure:"user"`
-	Pass    string `mapstructure:"pass"`
-	SSLMode string `mapstructure:"sslMode"`
+	ConnectURL string `mapstructure:"connectURL"`
+	Host       string `mapstructure:"host"`
+	Port       string `mapstructure:"port"`
+	Name       string `mapstructure:"name"`
+	User       string `mapstructure:"user"`
+	Pass       string `mapstructure:"pass"`
+	SSLMode    string `mapstructure:"sslMode"`
 }
 
 type cache struct {
+	ConnectURL      string `mapstructure:"connectURL"`
 	Host            string `mapstructure:"host"`
 	Port            string `mapstructure:"port"`
 	CachePrefix     string `mapstructure:"cachePrefix"`

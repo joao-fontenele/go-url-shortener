@@ -1,5 +1,6 @@
 port: 8080
 database:
+  connectURL: ""
   host: postgres
   port: 5432
   name: shortdb
@@ -7,6 +8,7 @@ database:
   pass: short
   sslMode: disable
 cache:
+  connectURL: ""
   host: redis
   port: 6379
 
