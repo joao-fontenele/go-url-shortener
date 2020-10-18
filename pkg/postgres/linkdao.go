@@ -86,6 +86,9 @@ func (d *dao) List(ctx context.Context, limit int, skip int) ([]shortener.Link, 
 	for rows.Next() {
 		l := shortener.Link{}
 		err = rows.Scan(&l.Slug, &l.URL, &l.CreatedAt)
+		if err != nil {
+			break
+		}
 		links = append(links, l)
 	}
 
