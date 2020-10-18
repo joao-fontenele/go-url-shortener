@@ -8,6 +8,9 @@ import (
 
 // FakeLinkService holds fake implementations for the LinkService interface
 type FakeLinkService struct {
+	ListFn     func(ctx context.Context, limit, skip int) ([]shortener.Link, error)
+	ListCalled bool
+
 	GetURLFn     func(ctx context.Context, slug string) (string, error)
 	GetURLCalled bool
 
@@ -46,4 +49,10 @@ func (ls *FakeLinkService) GetNewSlug(ctx context.Context, size int) (string, er
 func (ls *FakeLinkService) GenerateSlug(size int) string {
 	ls.GenerateSlugCalled = true
 	return ls.GenerateSlugFn(size)
+}
+
+// List returns a list of links
+func (ls *FakeLinkService) List(ctx context.Context, limit, skip int) ([]shortener.Link, error) {
+	ls.ListCalled = true
+	return ls.ListFn(ctx, limit, skip)
 }

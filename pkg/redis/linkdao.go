@@ -70,3 +70,7 @@ func (d *dao) Delete(ctx context.Context, slug string) error {
 
 	return err
 }
+
+func (d *dao) List(ctx context.Context, skip, limit int) ([]shortener.Link, error) {
+	panic("not yet implemented")
+}

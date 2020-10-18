@@ -8,6 +8,9 @@ import (
 
 // FakeLinkRepo holds fake implementations for the LinkRepository interface
 type FakeLinkRepo struct {
+	ListFn     func(ctx context.Context, limit, skip int) ([]shortener.Link, error)
+	ListCalled bool
+
 	FindFn     func(ctx context.Context, slug string) (*shortener.Link, error)
 	FindCalled bool
 
@@ -46,4 +49,10 @@ func (lr *FakeLinkRepo) Insert(ctx context.Context, l *shortener.Link) (*shorten
 func (lr *FakeLinkRepo) Update(ctx context.Context, l *shortener.Link) error {
 	lr.UpdateCalled = true
 	return lr.UpdateFn(ctx, l)
+}
+
+// List is a mock for List method in link repository
+func (lr *FakeLinkRepo) List(ctx context.Context, limit, skip int) ([]shortener.Link, error) {
+	lr.ListCalled = true
+	return lr.ListFn(ctx, limit, skip)
 }

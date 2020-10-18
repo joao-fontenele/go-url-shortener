@@ -8,6 +8,9 @@ import (
 
 // FakeLinkDao holds fake implementations for the LinkDao interface
 type FakeLinkDao struct {
+	ListFn     func(ctx context.Context, limit, skip int) ([]shortener.Link, error)
+	ListCalled bool
+
 	FindFn     func(ctx context.Context, slug string) (*shortener.Link, error)
 	FindCalled bool
 
@@ -46,4 +49,10 @@ func (lr *FakeLinkDao) Insert(ctx context.Context, l *shortener.Link) (*shortene
 func (lr *FakeLinkDao) Update(ctx context.Context, l *shortener.Link) error {
 	lr.UpdateCalled = true
 	return lr.UpdateFn(ctx, l)
+}
+
+// List returns a list of links
+func (lr *FakeLinkDao) List(ctx context.Context, skip, limit int) ([]shortener.Link, error) {
+	lr.ListCalled = true
+	return lr.ListFn(ctx, limit, skip)
 }

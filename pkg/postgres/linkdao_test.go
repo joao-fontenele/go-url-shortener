@@ -177,3 +177,61 @@ func TestInsert(t *testing.T) {
 		})
 	}
 }
+
+func TestList(t *testing.T) {
+	conn := GetConnection()
+	if err := truncateDB(conn); err != nil {
+		t.Fatalf("error truncating test database tables: %v", err)
+	}
+
+	err := seedDB(conn)
+	if err != nil {
+		t.Fatalf("failed to seed db: %v", err)
+	}
+
+	dao := NewLinkDao(conn)
+
+	expectedLinks := []shortener.Link{
+		{
+			URL:       "https://www.google.com",
+			Slug:      "a1CDz",
+			CreatedAt: time.Date(2020, 5, 1, 0, 0, 0, 0, time.UTC),
+		},
+	}
+
+	tests := []struct {
+		Name           string
+		ExpectedErr    error
+		ExpectedResult []shortener.Link
+		Skip           int
+		Limit          int
+	}{
+		{
+			Name:           "FirstPageSuccess",
+			ExpectedErr:    nil,
+			ExpectedResult: expectedLinks,
+			Skip:           0,
+			Limit:          1,
+		},
+		{
+			Name:           "SecondPageEmpty",
+			ExpectedErr:    nil,
+			ExpectedResult: []shortener.Link{},
+			Skip:           1,
+			Limit:          1,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.Name, func(t *testing.T) {
+			links, err := dao.List(context.Background(), tc.Limit, tc.Skip)
+			if err != nil {
+				t.Errorf("Failed to List links: %v", err)
+			}
+
+			if diff := cmp.Diff(tc.ExpectedResult, links); diff != "" {
+				t.Errorf("Result links list is not equal to expected (-want +got):\n%s", diff)
+			}
+		})
+	}
+}

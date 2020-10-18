@@ -5,6 +5,7 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/joao-fontenele/go-url-shortener/pkg/api/response"
 	"github.com/joao-fontenele/go-url-shortener/pkg/shortener"
@@ -87,4 +88,45 @@ func (h *ShortenerHandler) Redirect(ctx *fasthttp.RequestCtx) {
 
 	ctx.Redirect(URL, http.StatusMovedPermanently)
 	return
+}
+
+// List is a handler for listing link entities
+func (h *ShortenerHandler) List(ctx *fasthttp.RequestCtx) {
+	ctx.SetContentType("application/json")
+	skipBytes := ctx.QueryArgs().Peek("skip")
+	skip, err := strconv.Atoi(string(skipBytes))
+
+	if err != nil || skip < 0 {
+		status := http.StatusBadRequest
+		ctx.SetStatusCode(status)
+		errMessage := "Invalid skip argument, must be integer greater than or equal to 0"
+		b, _ := json.Marshal(response.HTTPErr{Message: errMessage, StatusCode: status})
+		ctx.Write(b)
+		return
+	}
+
+	limitBytes := ctx.QueryArgs().Peek("limit")
+	limit, err := strconv.Atoi(string(limitBytes))
+
+	if err != nil || limit <= 0 {
+		status := http.StatusBadRequest
+		ctx.SetStatusCode(status)
+		errMessage := "Invalid limit argument, must be integer greater than 0"
+		b, _ := json.Marshal(response.HTTPErr{Message: errMessage, StatusCode: status})
+		ctx.Write(b)
+		return
+	}
+
+	links, err := h.LinkService.List(ctx, limit, skip)
+	if err != nil {
+		status := http.StatusInternalServerError
+		ctx.SetStatusCode(status)
+		errMessage := fmt.Sprintf("Failed to list links: %v", err.Error())
+		b, _ := json.Marshal(response.HTTPErr{Message: errMessage, StatusCode: status})
+		ctx.Write(b)
+		return
+	}
+
+	b, _ := json.Marshal(links)
+	ctx.Write(b)
 }

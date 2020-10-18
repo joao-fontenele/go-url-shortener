@@ -2,10 +2,12 @@ package shortener
 
 import (
 	"context"
+	"fmt"
 )
 
 // LinkRepository is a contract between services and underlying datastore
 type LinkRepository interface {
+	List(ctx context.Context, limit, skip int) ([]Link, error)
 	Find(ctx context.Context, slug string) (*Link, error)
 	Insert(ctx context.Context, l *Link) (*Link, error)
 	Update(ctx context.Context, l *Link) error
@@ -17,7 +19,7 @@ type linkRepository struct {
 	cacheDao LinkDao
 }
 
-var _ LinkDao = &linkRepository{}
+var _ LinkRepository = &linkRepository{}
 
 // NewLinkRepository instantiates a LinkRepository, given a Dao
 func NewLinkRepository(dbDao LinkDao, cacheDao LinkDao) LinkRepository {
@@ -70,4 +72,9 @@ func (lr *linkRepository) Delete(ctx context.Context, slug string) error {
 	// ignore any possible cache errors
 	lr.cacheDao.Delete(ctx, slug)
 	return nil
+}
+
+func (lr *linkRepository) List(ctx context.Context, limit int, skip int) ([]Link, error) {
+	fmt.Printf("\nrepo: limit=%d, skip=%d\n", limit, skip)
+	return lr.dbDao.List(ctx, limit, skip)
 }

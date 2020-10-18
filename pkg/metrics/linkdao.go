@@ -72,3 +72,9 @@ func (dw *daoWrapper) Delete(ctx context.Context, slug string) error {
 	apm(err, dw.name, "delete", time.Now())
 	return err
 }
+
+func (dw *daoWrapper) List(ctx context.Context, limit, skip int) ([]shortener.Link, error) {
+	links, err := dw.dao.List(ctx, limit, skip)
+	apm(err, dw.name, "list", time.Now())
+	return links, err
+}
