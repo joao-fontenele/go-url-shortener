@@ -69,3 +69,25 @@ func (d *dao) Update(ctx context.Context, l *shortener.Link) error {
 func (d *dao) Delete(ctx context.Context, slug string) error {
 	panic("not yet implemented")
 }
+
+func (d *dao) List(ctx context.Context, limit int, skip int) ([]shortener.Link, error) {
+	rows, err := d.conn.Query(
+		ctx,
+		`SELECT slug, url, createdAt FROM links LIMIT $1 OFFSET $2`,
+		limit,
+		skip,
+	)
+
+	links := []shortener.Link{}
+	if err != nil {
+		return links, err
+	}
+
+	for rows.Next() {
+		l := shortener.Link{}
+		err = rows.Scan(&l.Slug, &l.URL, &l.CreatedAt)
+		links = append(links, l)
+	}
+
+	return links, rows.Err()
+}

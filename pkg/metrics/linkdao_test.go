@@ -404,3 +404,77 @@ func TestUpdate(t *testing.T) {
 		})
 	}
 }
+
+func TestList(t *testing.T) {
+	unexpectedErr := fmt.Errorf("Unexpected")
+
+	successList := func(ctx context.Context, limit, skip int) ([]shortener.Link, error) {
+		return []shortener.Link{}, nil
+	}
+	UnexpectedErr := func(ctx context.Context, limit, skip int) ([]shortener.Link, error) {
+		return []shortener.Link{}, unexpectedErr
+	}
+
+	tests := []struct {
+		Name                string
+		ListFn              func(ctx context.Context, limit, skip int) ([]shortener.Link, error)
+		ExpectedLabelResult string
+		ExpectedErr         error
+	}{
+		{
+			Name:                "Success",
+			ListFn:              successList,
+			ExpectedLabelResult: "success",
+			ExpectedErr:         nil,
+		},
+		{
+			Name:                "UnexpectedErr",
+			ListFn:              UnexpectedErr,
+			ExpectedLabelResult: "error",
+			ExpectedErr:         unexpectedErr,
+		},
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.Name, func(t *testing.T) {
+			resetMetrics()
+
+			daoName := "cache"
+			baseDao := &mocks.FakeLinkDao{
+				ListFn: tc.ListFn,
+			}
+			dao := metrics.NewLinkDao(baseDao, daoName)
+
+			links, err := dao.List(context.Background(), 10, 0)
+			if !errors.Is(err, tc.ExpectedErr) {
+				t.Errorf("Expected error to be equal %v but got %v", tc.ExpectedErr, err)
+			}
+
+			if diff := cmp.Diff([]shortener.Link{}, links); diff != "" {
+				t.Errorf("Failed to fetch expected links (-want +got):\n%s", diff)
+			}
+
+			metricsText := fmt.Sprintf(
+				`
+				# HELP dao_operations_total Total DAO operations by result (error/success)
+				# TYPE dao_operations_total counter
+				dao_operations_total{name="%s",result="%s"} 1
+				`,
+				daoName,
+				tc.ExpectedLabelResult,
+			)
+			err = promtest.CollectAndCompare(
+				metrics.DAOOperationsCounter,
+				strings.NewReader(metricsText),
+				"dao_operations_total",
+			)
+
+			if err != nil {
+				t.Errorf("Error comparing dao_operations_total metric: %v", err)
+			}
+
+			// TODO: test histogram metrics, and find a way to spy on prometheus metrics
+			// without having to collect the metrics themselves
+		})
+	}
+}

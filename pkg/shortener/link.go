@@ -16,6 +16,7 @@ type Link struct {
 
 // LinkDao represents a contract to access a single datastore
 type LinkDao interface {
+	List(ctx context.Context, limit int, skip int) ([]Link, error)
 	Find(ctx context.Context, slug string) (*Link, error)
 	Insert(ctx context.Context, l *Link) (*Link, error)
 	Update(ctx context.Context, l *Link) error
