@@ -6,6 +6,7 @@ import (
 	"github.com/joao-fontenele/go-url-shortener/pkg/api/middleware"
 	"github.com/joao-fontenele/go-url-shortener/pkg/shortener"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/valyala/fasthttp"
 	"github.com/valyala/fasthttp/fasthttpadaptor"
 )
 
@@ -28,6 +29,9 @@ func New(linkService shortener.LinkService) *router.Router {
 	)
 
 	linkHandler := &handler.ShortenerHandler{LinkService: linkService}
+	router.OPTIONS("/links", middleware.Cors(func(ctx *fasthttp.RequestCtx) {
+		return
+	}))
 	router.POST(
 		"/links",
 		middleware.Logger(
