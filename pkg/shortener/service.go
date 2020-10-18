@@ -18,6 +18,7 @@ var seededRand *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
 
 // LinkService will hold the businesses logic to handle link operations
 type LinkService interface {
+	List(ctx context.Context, limit, skip int) ([]Link, error)
 	Create(ctx context.Context, URL string) (*Link, error)
 	GetURL(ctx context.Context, slug string) (string, error)
 	GetNewSlug(ctx context.Context, size int) (string, error)
@@ -82,4 +83,8 @@ func (ls *linkService) GetURL(ctx context.Context, slug string) (string, error) 
 		return "", err
 	}
 	return l.URL, err
+}
+
+func (ls *linkService) List(ctx context.Context, limit, skip int) ([]Link, error) {
+	return ls.repo.List(ctx, limit, skip)
 }
