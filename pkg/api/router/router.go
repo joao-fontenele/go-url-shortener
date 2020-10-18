@@ -37,6 +37,14 @@ func New(linkService shortener.LinkService) *router.Router {
 		),
 	)
 	router.GET(
+		"/links",
+		middleware.Logger(
+			middleware.Metrics(
+				middleware.Cors(linkHandler.List),
+			),
+		),
+	)
+	router.GET(
 		"/{slug}",
 		middleware.Logger(
 			middleware.Metrics(
