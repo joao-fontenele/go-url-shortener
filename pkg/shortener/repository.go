@@ -2,7 +2,6 @@ package shortener
 
 import (
 	"context"
-	"fmt"
 )
 
 // LinkRepository is a contract between services and underlying datastore
@@ -75,6 +74,5 @@ func (lr *linkRepository) Delete(ctx context.Context, slug string) error {
 }
 
 func (lr *linkRepository) List(ctx context.Context, limit int, skip int) ([]Link, error) {
-	fmt.Printf("\nrepo: limit=%d, skip=%d\n", limit, skip)
 	return lr.dbDao.List(ctx, limit, skip)
 }
