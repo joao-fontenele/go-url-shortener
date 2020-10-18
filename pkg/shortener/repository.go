@@ -17,7 +17,7 @@ type linkRepository struct {
 	cacheDao LinkDao
 }
 
-var _ LinkDao = &linkRepository{}
+var _ LinkRepository = &linkRepository{}
 
 // NewLinkRepository instantiates a LinkRepository, given a Dao
 func NewLinkRepository(dbDao LinkDao, cacheDao LinkDao) LinkRepository {
