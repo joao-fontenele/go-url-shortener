@@ -1,0 +1,167 @@
+openapi: 3.0.0
+
+info:
+  title: Go URL Shortener
+  description: >-
+    API for shortening links writen in go.
+  version: 1.0.0
+servers:
+  - url: https://jp-go-url-shortener.herokuapp.com
+    description: Production server
+  - url: http://localhost:8080
+    description: Development server
+
+tags:
+  - name: Links
+    description: Main requests for users.
+  - name: Internal
+    description: Internal routes, for admin purposes.
+
+paths:
+  /links:
+    get:
+      summary: List saved links entities
+      operationId: getLinks
+      tags:
+        - Links
+      parameters:
+        - in: query
+          name: limit
+          description: Amount of links to be returned
+          required: true
+          schema:
+            type: number
+        - in: query
+          name: skip
+          description: Skip this many links from the beginning
+          required: true
+          schema:
+            type: number
+      # end parameters
+      responses:
+        '200':
+          description: Links list.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Link'
+        '400':
+          $ref: '#/components/responses/error'
+    # end get
+
+    post:
+      summary: Create a new Link
+      operationId: createLink
+      tags:
+        - Links
+      requestBody:
+        description: Details about the item to be inserted
+        required: true
+        content:
+          application/json:
+            schema:
+              properties:
+                url:
+                  type: string
+                  format: uri
+                  example: https://www.google.com/search?q=golang
+      responses:
+        '201':
+          description: Created Link
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Link'
+
+        '400':
+          $ref: '#/components/responses/error'
+    # end post
+  # end /links
+  /{slug}:
+    get:
+      summary: Use shortening service
+      operationId: getRedirect
+      tags:
+        - Links
+      parameters:
+        - in: path
+          name: slug
+          description: The shortened link
+          required: true
+          schema:
+            type: string
+      responses:
+        '301':
+          description: Redirect to link if slug exists
+        '404':
+          description: Link slug not found
+  # end /{slug}
+
+  /internal/status:
+    get:
+      summary: Health check.
+      operationId: getHealthCheck
+      tags:
+        - Internal
+      responses:
+        '200':
+          description: Response OK.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  running:
+                    type: boolean
+                    example: true
+  # end /internal/metrics
+
+  /internal/metrics:
+    get:
+      summary: Prometheus scraping endpoint.
+      description: This Endpoint has different credentials than the cache basic auth credentials.
+      operationId: getMetrics
+      tags:
+        - Internal
+      responses:
+        '200':
+          description: Prometheus metrics format
+  # end /internal/metrics
+# end paths
+
+components:
+  responses:
+    error:
+      description: Generic error.
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+                example: Invalid parameter
+              statusCode:
+                type: number
+                example: 400
+  # end responses
+
+  schemas:
+    Link:
+      type: object
+      properties:
+        slug:
+          type: string
+          example: a5FTb
+        url:
+          type: string
+          format: uri
+          example: https://www.google.com
+        createdAt:
+          type: string
+          format: date-time
+          example: '2020-05-01T00:00:00.000Z'
+    # end link
+# end components
