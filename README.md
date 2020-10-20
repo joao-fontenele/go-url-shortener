@@ -10,4 +10,4 @@ A simple api, that provides url shortening service.
 
 ### API documentation
 
-Theres an openapi yml file in the docs folder [openapi.yml](https://editor.swagger.io/?url=https://github.com/joao-fontenele/go-url-shortener/blob/master/docs/openapi.yml)
+Theres an openapi yml file in the docs folder [openapi.yml](./docs/openapi.yml)
